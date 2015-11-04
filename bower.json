@@ -1,15 +1,11 @@
 {
   "name": "shuffling-pines",
   "version": "0.0.1",
-  "authors": [
-    ""
-  ],
   "description": "",
   "main": "app.js",
   "moduleType": [],
   "license": "MIT",
-  "homepage": "",
-  "private": true,
+  "homepage": "https://github.com/CSCI-E32/shuffling-pines",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -18,7 +14,9 @@
     "tests"
   ],
   "dependencies": {
+    "angular-mocks": "~1.4.7",
+    "angular": "~1.4.7",
     "bootstrap": "~3.3.5",
-    "angular": "~1.4.6"
+    "jquery": "~2.1.4"
   }
 }

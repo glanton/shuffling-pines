@@ -4,76 +4,72 @@
   <head>
     <meta charset="utf-8" />
     <title>Shuffling Pines</title>
-    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
-
-    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="../bower_components/angular/angular.min.js"></script>
-
-    <script src="../src/app.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="vendors.js"></script>
+    <script src="app.js"></script>
   </head>
 
-  <body>
+  <body class="padded" ng-app="shuffling">
     <h1>Shuffling Pines</h1>
     <div class="row">
       <div class="col-md-12">
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
-          <li role="presentation" class="active"><a href="#form" aria-controls="form" role="tab" data-toggle="tab">Form</a></li>
-          <li role="presentation"><a href="#guests" aria-controls="guests" role="tab" data-toggle="tab">Guests</a></li>
+          <li role="presentation" class="active" id="formTab"><a href="#form" aria-controls="form" role="tab" data-toggle="tab">Form</a></li>
+          <li role="presentation" id="guestsTab"><a href="#guests" aria-controls="guests" role="tab" data-toggle="tab">Guests</a></li>
         </ul>
 
         <!-- Tab panes -->
         <div class="tab-content">
           <!-- Tab pane 1 -->
-          <div role="tabpanel" class="tab-pane active" id="form">
+          <div role="tabpanel" class="tab-pane active" id="form" ng-controller="FormController as vm">
             <div>
 
               <form class="col-md-6 well">
                 <div class="form-group">
                   <label for="guest-name">Guest Name</label>
-                  <input type="text" class="form-control" id="guest-name" placeholder="">
+                  <input type="text" class="form-control" id="guest-name" placeholder="" ng-model="vm.guestName">
                 </div>
                 <div class="form-group">
                   <label for="transition-date">Transition Date</label>
-                  <input type="date" class="form-control" id="transition-date" placeholder="">
+                  <input type="date" class="form-control" id="transition-date" placeholder="" ng-model="vm.transitionDate">
                 </div>
                 <div class="radio">
                   <label>
-                    <input type="radio" name="pickup-dropoff" id="pickup" value="pickup" checked>
+                    <input type="radio" name="pickup-dropoff" id="pickup" value="pickup" checked ng-model="vm.pickupOrDropoff">
                     Pick-up
                   </label>
                 </div>
                 <div class="radio">
                   <label>
-                    <input type="radio" name="pickup-dropoff" id="dropoff" value="dropoff">
+                    <input type="radio" name="pickup-dropoff" id="dropoff" value="dropoff" ng-model="vm.pickupOrDropoff">
                     Drop-off
                   </label>
                 </div>
                 <div class="form-group">
                   <label for="location">Location</label>
-                  <textarea class="form-control" id="location"></textarea>
+                  <textarea class="form-control" id="location" ng-readonly="(!vm.pickupOrDropoff)" ng-model="vm.pickDropLocation"></textarea>
                 </div>
-                <button type="submit" class="btn">Submit</button>
+                <button type="submit" class="btn btn-primary" ng-click="vm.submit()">Submit</button>
               </form>
 
               <!-- bound display -->
-              <div ng-show="false" class="col-md-6 well">
-                <div ng-show="false" class="form-group">
+              <div ng-show="(vm.guestName || vm.transitionDate || vm.pickupOrDropoff)" class="col-md-6 well">
+                <div ng-show="vm.guestName" class="form-group">
                   <label>Name: </label>
-                  John Harvard
+                  {{ vm.guestName }}
                 </div>
-                <div ng-show="false" class="form-group">
+                <div ng-show="vm.transitionDate" class="form-group">
                   <label>Transition Date: </label>
-                  today!
+                  {{ vm.transitionDate | date }}
                 </div>
-                <div ng-show="false" class="form-group">
+                <div ng-show="vm.pickupOrDropoff" class="form-group">
                   <label>Status: </label>
-                  drop-off
+                  {{ vm.pickupOrDropoff }}
                 </div>
-                <div ng-show="false" class="form-group">
+                <div ng-show="vm.pickDropLocation" class="form-group">
                   <label>Location: </label>
-                  right here
+                  {{ vm.pickDropLocation }}
                 </div>
               </div>
 
@@ -81,10 +77,20 @@
           </div>
 
           <!-- Tab pane 2 -->
-          <div role="tabpanel" class="tab-pane" id="guests">
-            <ul class="list-unstyled">
-              <li>
-
+          <div role="tabpanel" class="tab-pane well" id="guests" ng-controller="TabController as vm">
+            <button type="button" class="btn btn-primary" id="saveChanges" ng-click="vm.save()">Save Changes</button>
+            <br><br>
+            <ul class="list-group">
+              <li class="list-group-item" ng-repeat="(index, guest) in vm.guests track by $index" ng-show="!guest.deleted">
+                <input type="text" ng-model="guest.guestName">
+                <input type="date" ng-model="guest.transitionDate">
+                <select ng-model="guest.pickupOrDropoff">
+                  <option value="pickup" ng-show="guest.pickupOrDropoff !== 'dropoff'">Pick-up</option>
+                  <option value="dropoff" ng-show="guest.pickupOrDropoff === 'dropoff' || !guest.pickupOrDropoff">Drop-off</option>
+                  <option value="arrived" ng-show="true" >Arrived</option>
+                </select>
+                <input type="text" ng-model="guest.pickDropLocation">
+                <button type="button" ng-click="vm.delete(index)">Remove Guest</button>
               </li>
             </ul>
           </div>
